@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/* Direction artistique noire, reprise du portfolio.
+   Trois principes, et tout en découle :
+   1. Trois noirs séparés d'un ou deux pourcents de luminance, jamais un aplat.
+   2. La profondeur vient d'un filet de 1px en blanc alpha — aucune ombre.
+   3. Le blanc EST l'accent : il n'y a pas de couleur de marque. */
+@theme {
+  /* Fonds : page, surface élevée, bande discrète. */
+  --color-paper: #0a0a0a;
+  --color-surface: #111111;
+  --color-surface-muted: #151515;
+
+  /* Texte. `ink-soft` est ajouté ici : le portfolio n'a que deux niveaux,
+     une progression à cinq étapes en demande un intermédiaire. */
+  --color-ink: #fafafa;
+  --color-ink-soft: #d4d4d8;
+  --color-muted: #a1a1aa;
+
+  /* Filets. Le 12 % du portfolio ne rend que ~1,9:1 sur une surface : indolore
+     sur un site sans formulaire, illisible sur une page de connexion. D'où un
+     second filet à 35 % (~3,05:1, le seuil WCAG 1.4.11), réservé aux champs. */
+  --color-line: rgba(250, 250, 250, 0.12);
+  --color-line-strong: rgba(250, 250, 250, 0.35);
+
+  /* L'accent est le blanc lui-même. */
+  --color-accent: #fafafa;
+  --color-accent-dark: #e4e4e7;
+  --color-accent-wash: rgba(250, 250, 250, 0.08);
+
+  --color-amber: #fcd34d;
+  --color-amber-wash: rgba(252, 211, 77, 0.1);
+  --color-danger: #fca5a5;
+  --color-danger-wash: rgba(239, 68, 68, 0.1);
+
+  --color-grid: rgba(250, 250, 250, 0.05);
+
+  --font-sans: var(--font-body), system-ui, sans-serif;
+  --font-display: var(--font-display-family), ui-serif, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent-wash);
+}
+
+/* Anneau de focus repris tel quel du portfolio, y compris l'offset de 3px. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Grille de fond : 64px, masquée en ellipse depuis le haut. Purement
+   décorative, donc derrière tout et ignorée par les lecteurs d'écran. */
+.fond-grille {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--color-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(
+    ellipse 80% 70% at 50% 0%,
+    black 20%,
+    transparent 70%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Le rayon croît avec la surface de l'objet : 6px un contrôle, 8px un bouton,
+   16px une carte. C'est une règle du portfolio, pas un hasard. */
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-6
+         text-base font-medium transition-colors disabled:cursor-not-allowed
+         disabled:opacity-45;
+}
+@utility btn-primary {
+  @apply btn bg-accent font-semibold text-paper;
+}
+@utility btn-secondary {
+  @apply btn border border-line bg-surface text-ink;
+}
+@utility btn-ghost {
+  @apply btn text-muted;
+}
+@utility btn-danger {
+  @apply btn border border-danger/40 bg-danger-wash text-danger;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-accent-dark);
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: color-mix(in oklab, var(--color-accent) 40%, transparent);
+  background-color: var(--color-accent-wash);
+}
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-accent-wash);
+  color: var(--color-ink);
+}
+
+@layer components {
+  /* Pas de `focus:outline-none` ici : on cumule l'anneau global opaque et un
+     renfort de bordure. Ne jamais substituer un signal faible à un fort. */
+  .field {
+    @apply w-full rounded-md border border-line-strong bg-surface px-3.5 py-2.5
+           text-base text-ink placeholder:text-muted/70 focus:border-accent/60;
+  }
+
+  .card {
+    @apply rounded-2xl border border-line bg-surface;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink-soft;
+  }
+
+  /* `tabular-nums` : les durées et compteurs changent d'un écran à l'autre et
+     sautilleraient sans chasse fixe. */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line
+           px-3 py-1 text-xs font-medium tabular-nums text-muted;
+  }
+
+  /* Surtitre en capitales espacées — le seul geste typographique appuyé de
+     la DA d'origine. */
+  .surtitre {
+    @apply text-xs font-medium uppercase text-muted;
+    letter-spacing: 0.18em;
+  }
+}
