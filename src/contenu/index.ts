@@ -11,4 +11,4 @@ export function leconParSlug(slug: string): Lecon | undefined {
   return LECONS.find((l) => l.slug === slug);
 }
 
-export type { Bloc, Lecon } from "./types";
+export type { Bloc, CasTruque, Lecon } from "./types";

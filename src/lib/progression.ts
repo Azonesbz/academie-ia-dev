@@ -3,38 +3,79 @@ import { getDb, nowIso } from "./db";
 import { ETAPES } from "./etapes";
 
 /**
- * Suivi de progression. La seule donnée d'apprenant que le produit conserve :
- * quelles étapes sont faites, et quand. Rien de ce qu'il a écrit.
+ * Les jalons déclarés par l'apprenant. Aucun pourcentage, aucun agrégat : un
+ * chiffre unique cacherait laquelle des cinq compétences manque, ce qui est le
+ * défaut du diplôme en plus petit.
  */
 
-export function etapesFaites(userId: string): Set<string> {
-  const lignes = getDb()
-    .prepare("SELECT etape_slug FROM etapes_faites WHERE user_id = ?")
-    .all(userId) as { etape_slug: string }[];
-  return new Set(lignes.map((l) => l.etape_slug));
+export type Jalon = { etapeSlug: string; jalon: 1 | 2; poseLe: string };
+
+export function jalonsDe(userId: string): Jalon[] {
+  return getDb()
+    .prepare(
+      "SELECT etape_slug AS etapeSlug, jalon, pose_le AS poseLe FROM jalons WHERE user_id = ?",
+    )
+    .all(userId) as Jalon[];
 }
 
-export function marquerFaite(userId: string, etapeSlug: string): void {
+/** Le jour calendaire d'un instant ISO, en UTC — la granularité du verrou. */
+function jour(iso: string): string {
+  return iso.slice(0, 10);
+}
+
+/**
+ * Le second jalon exige un jour strictement postérieur au premier. Ce n'est
+ * pas une preuve — c'est ce que ça coûte : à l'honnête, refaire le travail ;
+ * au menteur, attendre vingt-quatre heures.
+ */
+export function jalon2Ouvert(jalons: Jalon[], etapeSlug: string): boolean {
+  const premier = jalons.find((j) => j.etapeSlug === etapeSlug && j.jalon === 1);
+  if (!premier) return false;
+  return jour(premier.poseLe) < jour(nowIso());
+}
+
+export function aJalon(
+  jalons: Jalon[],
+  etapeSlug: string,
+  jalon: 1 | 2,
+): boolean {
+  return jalons.some((j) => j.etapeSlug === etapeSlug && j.jalon === jalon);
+}
+
+export function poserJalon(
+  userId: string,
+  etapeSlug: string,
+  jalon: 1 | 2,
+): void {
   getDb()
     .prepare(
-      `INSERT INTO etapes_faites (user_id, etape_slug, faite_le)
-       VALUES (?, ?, ?)
-       ON CONFLICT (user_id, etape_slug) DO NOTHING`,
+      `INSERT INTO jalons (user_id, etape_slug, jalon, pose_le)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT (user_id, etape_slug, jalon) DO NOTHING`,
     )
-    .run(userId, etapeSlug, nowIso());
+    .run(userId, etapeSlug, jalon, nowIso());
 }
 
-export function annulerFaite(userId: string, etapeSlug: string): void {
+export function retirerJalon(
+  userId: string,
+  etapeSlug: string,
+  jalon: 1 | 2,
+): void {
   getDb()
-    .prepare("DELETE FROM etapes_faites WHERE user_id = ? AND etape_slug = ?")
-    .run(userId, etapeSlug);
+    .prepare(
+      "DELETE FROM jalons WHERE user_id = ? AND etape_slug = ? AND jalon >= ?",
+    )
+    .run(userId, etapeSlug, jalon);
 }
 
-/** Rang de la première étape non faite, ou `null` si la progression est close. */
-export function prochaineEtape(faites: Set<string>) {
-  return ETAPES.find((e) => !faites.has(e.slug)) ?? null;
+/** La première étape dont le premier jalon manque. */
+export function prochaineEtape(jalons: Jalon[]) {
+  return ETAPES.find((e) => !aJalon(jalons, e.slug, 1)) ?? null;
 }
 
-export function pourcentage(faites: Set<string>): number {
-  return Math.round((faites.size / ETAPES.length) * 100);
+/** Vrai quand les dix jalons sont posés — l'écran de fin. */
+export function toutDeclare(jalons: Jalon[]): boolean {
+  return ETAPES.every(
+    (e) => aJalon(jalons, e.slug, 1) && aJalon(jalons, e.slug, 2),
+  );
 }

@@ -66,4 +66,27 @@ export const etape02: Lecon = {
   ],
   exercice:
     "Sur un comportement réel de ton projet — un que tu as déjà écrit sans test —, écris le test d'abord. Casse volontairement l'implémentation pour le voir rouge, lis la raison, répare. Le test doit être en Arrange, Act, Assert, avec les trois commentaires visibles.",
+  casTruque: {
+    titre: "Un test vert qui ne teste rien",
+    mise_en_scene:
+      "Ce test est passé au vert du premier coup. Il est en Arrange, Act, Assert, ses commentaires sont visibles, il porte sur un comportement métier réel, et son nom décrit précisément ce qu'il prétend vérifier.",
+    langage: "ts",
+    artefact: `test("applique la remise de 20 % au-dela de 100 euros", () => {
+  // Arrange
+  const panier = construirePanier({ total: 150 });
+  const calculateur = new Calculateur(panier);
+
+  // Act
+  const resultat = calculateur.appliquerRemise();
+
+  // Assert
+  expect(resultat).toBeDefined();
+  expect(resultat.total).toBeGreaterThan(0);
+  expect(calculateur.appliquerRemise).toHaveBeenCalled();
+});`,
+    question:
+      "Ce test ne peut pas échouer. Quelle épreuve, en une phrase, le démontre — et laquelle des trois assertions est la plus trompeuse ?",
+    revelation:
+      "L'épreuve : supprime le corps de `appliquerRemise` et fais-lui retourner un objet quelconque. Le test reste vert. C'est le seul test qui vaille — si l'implémentation peut disparaître sans que le test bronche, il ne mesure rien. Les trois assertions échouent pour trois raisons distinctes. `toBeDefined` est vrai de presque tout. `toBeGreaterThan(0)` était déjà vrai avant la remise, donc il ne peut pas distinguer une remise appliquée d'une remise oubliée. Mais la plus trompeuse est la troisième : elle vérifie que la fonction a été appelée — or c'est le test lui-même qui vient de l'appeler, deux lignes plus haut. Elle a l'air d'être la plus technique et elle est purement circulaire. Ce qui manque n'est nulle part dans le fichier : la seule assertion utile aurait porté sur la valeur attendue, 120, et elle aurait échoué avant que le code n'existe.",
+  },
 };

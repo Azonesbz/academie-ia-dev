@@ -77,4 +77,22 @@ git stage -A               → passe`,
   ],
   exercice:
     "Parmi tout ce que tu t'es promis de faire proprement sur ton dépôt, choisis-en une seule qui mérite de te refuser réellement — et écris pourquoi les autres peuvent rester des vœux. Puis fais-la exister : règle native si elle suffit, script sinon, avec son test. La justification écrite compte autant que le garde.",
+  casTruque: {
+    titre: "Un garde qui n'a jamais rien refusé",
+    mise_en_scene:
+      "Un développeur est fier de celui-ci : il l'a écrit, testé, documenté, et il tourne depuis six mois sans le moindre incident.",
+    langage: "bash",
+    artefact: `# Refuse les commandes destructrices.
+readonly DESTRUCTEUR='rm[[:space:]]+-rf[[:space:]]+/($|[[:space:]])|mkfs|dd[[:space:]]+if=.*of=/dev/'
+
+if printf '%s' "\${commande}" | grep -Eq "\${DESTRUCTEUR}"; then
+  refuser "Commande destructrice bloquée."
+fi
+
+# Six mois en production. Zéro refus émis.`,
+    question:
+      "Le garde est correct : son motif fait ce qu'il annonce. Pourquoi ne protège-t-il pourtant de rien, et que faudrait-il regarder pour choisir la bonne règle ?",
+    revelation:
+      "« Zéro refus en six mois » n'est pas une réussite, c'est le diagnostic. Ce garde interdit un geste que son auteur ne fait pas : personne ne tape `rm -rf /` par mégarde, et un agent ne le propose pas non plus. Il a été choisi parce qu'il était facile à écrire et impressionnant à montrer, pas parce que son infraction coûtait cher. Pendant ce temps, ce qui casse réellement des dépôts — un commit poussé avec des tests rouges, une clé privée entrée dans l'index, l'écrasement d'un travail non poussé — passe tous les jours sans rencontrer personne. La bonne question n'est jamais « qu'est-ce que je sais bloquer ? » mais « qu'est-ce qui m'a déjà coûté une soirée ? ». Un garde utile refuse quelque chose de temps en temps, et t'agace parfois. Un garde qui ne refuse jamais rien ne se distingue pas d'un garde absent — et c'est exactement ce qu'on ne peut pas voir de l'intérieur.",
+  },
 };

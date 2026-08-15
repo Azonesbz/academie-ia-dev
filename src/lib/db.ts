@@ -65,16 +65,25 @@ function migrate(db: Database.Database) {
     );
     CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 
-    -- Progression : une ligne par étape achevée. On ne stocke QUE le fait
-    -- qu'une étape est faite et sa date. Jamais l'artefact rendu, jamais le
-    -- code, jamais une transcription de session : un cours gratuit qui
-    -- collecte le code de ses apprenants est un collecteur de propriété
-    -- intellectuelle sans contrepartie.
-    CREATE TABLE IF NOT EXISTS etapes_faites (
+    -- Remplacée par jalons : un booléen fait/pas fait ne distinguait pas
+    -- « fait une fois la page ouverte » de « refait un autre jour sans elle ».
+    DROP TABLE IF EXISTS etapes_faites;
+
+    -- Jalons déclarés. On ne stocke QUE l'étape, le numéro de jalon et la
+    -- date. Jamais l'artefact, jamais le code, jamais une transcription — et
+    -- jamais le diagnostic écrit dans le cas truqué, qui ne quitte pas
+    -- l'onglet. Un cours gratuit qui collecte le travail de ses apprenants
+    -- est un collecteur de propriété intellectuelle sans contrepartie.
+    --
+    -- La date porte le seul verrou que la machine puisse poser sans rien
+    -- lire : le second jalon ne peut pas être déclaré le même jour que le
+    -- premier. Ce n'est pas une vérification, c'est un fait de calendrier.
+    CREATE TABLE IF NOT EXISTS jalons (
       user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       etape_slug TEXT NOT NULL,
-      faite_le   TEXT NOT NULL,
-      PRIMARY KEY (user_id, etape_slug)
+      jalon      INTEGER NOT NULL CHECK (jalon IN (1, 2)),
+      pose_le    TEXT NOT NULL,
+      PRIMARY KEY (user_id, etape_slug, jalon)
     );
   `);
 }

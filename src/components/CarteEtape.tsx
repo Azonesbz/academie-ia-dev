@@ -24,7 +24,7 @@ export function CarteEtape({
       <h3 className="mt-4 text-xl font-medium leading-tight text-ink">
         {etape.titre}
       </h3>
-      <p className="mt-3 leading-relaxed text-muted">{etape.acquis}</p>
+      <p className="mt-3 leading-relaxed text-muted">{etape.jeSais}</p>
 
       <div className="mt-5 border-t border-line/50 pt-4">
         <p className="surtitre">Ce que tu produis</p>

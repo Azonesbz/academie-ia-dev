@@ -67,4 +67,33 @@ tâches:
   ],
   exercice:
     "Reprends le découpage de l'étape 01 et remplis les sept champs pour de bon, y compris les messages de commit en anglais. Une tâche dont tu n'arrives pas à écrire le commit d'avance est une tâche à scinder : refais-la passer par l'étape 01.",
+  casTruque: {
+    titre: "Un plan complet, et une tâche de trop",
+    mise_en_scene:
+      "Les sept champs sont remplis, les fichiers sont listés, les messages sont en anglais et à l'impératif. Le plan passerait n'importe quelle relecture de forme.",
+    langage: "yaml",
+    artefact: `directive: permettre l'export des factures en PDF
+scope: billing
+perimeter.areas: [lib, components]
+
+tâches:
+  - description: gabarit et types de la facture
+    files: [src/lib/facture-modele.ts, src/lib/types.ts]
+    commit: "feat(billing): add the invoice template"
+    status: fait
+
+  - description: génération du PDF et nettoyage du module de facturation
+    files: [src/lib/export-pdf.ts, src/lib/facture.ts]
+    commit: "feat(billing): generate invoice pdf and refactor the billing module"
+    status: en cours
+
+  - description: bouton d'export
+    files: [src/components/BoutonExport.tsx]
+    commit: "feat(billing): add the export button"
+    status: à faire`,
+    question:
+      "Une tâche est à scinder, et le plan te le dit lui-même. Où, exactement ?",
+    revelation:
+      "La deuxième, et le signe est dans son message de commit : « generate invoice pdf and refactor the billing module ». Le « and » n'est pas une maladresse de rédaction, c'est un diagnostic — un message qui a besoin d'une conjonction annonce deux intentions, donc deux tâches. Remarque ce qui rend le piège efficace : cette tâche respecte la limite de trois fichiers, elle a ses champs, elle a son statut. Aucun critère de forme ne l'attrape. C'est pour ça que le champ `commit` est le plus utile des sept, et qu'on l'écrit AVANT la tâche et non après : il est le seul à révéler qu'une tâche a deux intentions alors qu'elle a l'air d'en avoir une. Conséquence concrète : le jour où le refactor casse quelque chose, tu ne peux pas annuler le refactor sans annuler la génération du PDF.",
+  },
 };

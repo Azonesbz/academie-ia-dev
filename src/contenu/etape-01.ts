@@ -65,4 +65,25 @@ export const etape01: Lecon = {
   ],
   exercice:
     "Prends une demande réelle de ton projet — une que tu allais lancer d'un bloc. Découpe-la selon les quatre critères ci-dessus, en écrivant pour chaque tranche son intention unique, sa preuve, et ses fichiers. Si une tranche dépasse trois fichiers métier, scinde-la encore.",
+  casTruque: {
+    titre: "Un découpage qui a l'air propre",
+    mise_en_scene:
+      "Demande de départ : « ajoute l'export des factures en PDF ». Voici le découpage proposé. Il est en trois tranches, chacune a son intention, sa preuve et ses fichiers — la forme est respectée partout.",
+    langage: "text",
+    artefact: `1. Contrat — le gabarit et les données de la facture
+   preuve : le gabarit se rend avec un jeu de données de test
+   fichiers : facture-modele.ts, types.ts
+
+2. Logique — générer le PDF et le servir au téléchargement
+   preuve : l'export PDF fonctionne
+   fichiers : export-pdf.ts, telechargement.ts, facture.ts
+
+3. Présentation — le bouton d'export
+   preuve : cliquer, obtenir le fichier
+   fichiers : BoutonExport.tsx`,
+    question:
+      "Une seule de ces trois tranches est mal découpée. Laquelle, et à quoi le vois-tu ?",
+    revelation:
+      "La tranche 2. Sa preuve, « l'export PDF fonctionne », est une phrase et non une observation : elle ne dit pas ce qu'on regarde, ni ce qui se passe quand la facture n'a aucune ligne, quand le montant est négatif, quand la génération échoue à mi-parcours. Une preuve qu'on ne peut pas rater n'est pas une preuve. Le compte des fichiers le confirme sans qu'on ait besoin de juger : trois fichiers métier, et ils portent deux intentions distinctes — fabriquer le document, et le servir. Les tranches 1 et 3 sont bonnes, y compris la 3 dont la preuve paraît vague : « cliquer, obtenir le fichier » est une observation, tu sais immédiatement si le fichier arrive ou non. C'est le test à retenir : demande-toi non pas si la preuve est bien écrite, mais si tu peux la voir échouer.",
+  },
 };

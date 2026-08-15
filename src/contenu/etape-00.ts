@@ -44,4 +44,23 @@ export const etape00: Lecon = {
   ],
   exercice:
     "Cherche dans l'historique de tes propres sessions une preuve d'exécution de ce que ta configuration déclare : une règle citée, un refus, un comportement qui ne s'expliquerait pas autrement. Si tu n'en trouves aucune, tu viens de découvrir la même panne. Note ce que tu as cherché et ce que tu as trouvé.",
+  casTruque: {
+    titre: "Un rapport qui ne ment pas, et qui ne dit rien",
+    mise_en_scene:
+      "Un développeur s'inquiète : ses règles ne semblent plus s'appliquer. Il lance le diagnostic de son outil et obtient ceci. Il en conclut que tout va bien et cherche ailleurs.",
+    langage: "text",
+    artefact: `Diagnostic de l'installation
+
+  ✓ Version à jour (2.1.233)
+  ✓ Configuration lisible, syntaxe valide
+  ✓ 1 extension déclarée : methodo-equipe
+  ✓ Source de l'extension joignable
+  ✓ Aucun conflit de configuration détecté
+
+Aucun problème d'installation détecté.`,
+    question:
+      "Ce rapport est exact — aucune de ces cinq lignes n'est fausse. Qu'est-ce qu'il ne dit pas, et pourquoi le développeur va chercher au mauvais endroit ?",
+    revelation:
+      "Les cinq coches portent sur la DÉCLARATION : le fichier est lisible, l'extension y est inscrite, sa source répond. Aucune ne porte sur le CHARGEMENT — aucune ne dit qu'une seule règle est arrivée dans une seule session. Un contrôle ne parle que de son propre périmètre, et « aucun problème détecté » signifie « aucun problème parmi ceux que je regarde ». L'observation qui manque est de l'autre côté : dans les traces d'exécution, pas dans la configuration. Une règle chargée laisse une marque — elle est citée, elle refuse, elle change un comportement. Le piège est que l'absence de marque ressemble exactement à « je n'en ai pas eu besoin », et c'est cette ambiguïté qui rend la panne invisible. C'est ce rapport-là, mot pour mot, qui a laissé un plugin déclaré et absent tourner dans le vide pendant un mois.",
+  },
 };

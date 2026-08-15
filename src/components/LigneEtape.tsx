@@ -1,69 +1,58 @@
 import Link from "next/link";
-import { basculerEtape } from "@/app/app/actions";
 import type { Etape } from "@/lib/etapes";
 
 /**
- * Une étape dans l'espace connecté. La pastille de gauche porte l'état ; le
- * survol ne fait monter que la bordure, comme partout ailleurs.
+ * Une étape dans la liste. En lecture seule : aucun bouton de déclaration ici.
+ * Un critère posé à côté du clic n'a jamais rien empêché — on ne déclare que
+ * derrière le cas truqué, dans le chemin de la confrontation.
  */
 export function LigneEtape({
   etape,
-  faite,
-  courante,
+  jalon1,
+  jalon2,
 }: {
   etape: Etape;
-  faite: boolean;
-  courante: boolean;
+  jalon1: string | null;
+  jalon2: string | null;
 }) {
+  const etat = jalon2 ? "deux" : jalon1 ? "un" : "aucun";
+
   return (
-    <li
-      className={`card p-5 transition-colors duration-200 hover:border-accent/40 ${
-        courante ? "border-accent/40" : ""
-      }`}
-    >
+    <li className="card p-5 transition-colors duration-200 hover:border-accent/40">
       <div className="flex items-start gap-4">
         <span
           aria-hidden
-          className={`mt-1 grid size-6 shrink-0 place-items-center rounded-full border text-xs ${
-            faite
+          className={`mt-1 grid size-6 shrink-0 place-items-center rounded-full border font-mono text-xs tabular-nums ${
+            etat === "deux"
               ? "border-accent bg-accent text-paper"
-              : "border-line text-muted"
+              : etat === "un"
+                ? "border-accent/60 text-ink"
+                : "border-line text-muted"
           }`}
         >
-          {faite ? "✓" : etape.rang}
+          {etape.rang}
         </span>
 
         <div className="min-w-0 flex-1">
           <h3 className="text-base font-medium leading-snug">
             <Link
               href={`/app/etapes/${etape.slug}`}
-              className={`rounded-md transition-colors hover:text-ink ${
-                faite ? "text-muted line-through decoration-line" : "text-ink"
-              }`}
+              className="rounded-md text-ink transition-colors hover:text-muted"
             >
               {etape.titre}
             </Link>
           </h3>
           <p className="mt-1.5 text-sm leading-relaxed text-muted">
-            {etape.preuve}
+            {etape.jeSais}
+          </p>
+
+          <p className="mt-3 font-mono text-xs tabular-nums text-muted">
+            {etat === "aucun" && "aucun jalon déclaré"}
+            {etat === "un" && `fait le ${jalon1?.slice(0, 10)} · refait : non`}
+            {etat === "deux" &&
+              `fait le ${jalon1?.slice(0, 10)} · refait le ${jalon2?.slice(0, 10)}`}
           </p>
         </div>
-
-        <form action={basculerEtape} className="shrink-0">
-          <input type="hidden" name="slug" value={etape.slug} />
-          <input type="hidden" name="faite" value={faite ? "1" : "0"} />
-          <button
-            type="submit"
-            className="btn-ghost min-h-11 px-4 text-sm"
-            aria-label={
-              faite
-                ? `Marquer « ${etape.titre} » comme non faite`
-                : `Marquer « ${etape.titre} » comme faite`
-            }
-          >
-            {faite ? "Annuler" : "C'est fait"}
-          </button>
-        </form>
       </div>
     </li>
   );
