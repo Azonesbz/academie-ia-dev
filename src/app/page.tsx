@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EnTete } from "@/components/EnTete";
 import { CarteEtape } from "@/components/CarteEtape";
+import { HeroAccueil } from "@/components/HeroAccueil";
 import { SectionSocle } from "@/components/SectionSocle";
 import { ARRETE_LE, ETAPES } from "@/lib/etapes";
 import { currentUser } from "@/lib/auth";
@@ -20,24 +21,7 @@ export default async function PageAccueil() {
       <EnTete connecte={Boolean(user)} />
 
       <main id="contenu" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <section className="py-20 sm:py-28 lg:py-32">
-          <p className="surtitre">Progression close · {ARRETE_LE}</p>
-          <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-5xl lg:text-6xl">
-            Reprendre la main sur un dépôt parti en vrille.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-            Cinq étapes, sur ton propre projet. À la fin, une règle que tu
-            subissais est devenue un garde qui refuse — dans ton dépôt à toi.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="/signup" className="btn-primary">
-              Commencer l&apos;étape 00
-            </Link>
-            <Link href="#etapes" className="btn-secondary">
-              Voir les cinq étapes
-            </Link>
-          </div>
-        </section>
+        <HeroAccueil />
 
         <section className="border-t border-line/60 py-16 sm:py-20 lg:py-24">
           <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
