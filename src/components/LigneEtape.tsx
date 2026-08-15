@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { basculerEtape } from "@/app/app/actions";
 import type { Etape } from "@/lib/etapes";
 
@@ -33,12 +34,15 @@ export function LigneEtape({
         </span>
 
         <div className="min-w-0 flex-1">
-          <h3
-            className={`text-base font-medium leading-snug ${
-              faite ? "text-muted line-through decoration-line" : "text-ink"
-            }`}
-          >
-            {etape.titre}
+          <h3 className="text-base font-medium leading-snug">
+            <Link
+              href={`/app/etapes/${etape.slug}`}
+              className={`rounded-md transition-colors hover:text-ink ${
+                faite ? "text-muted line-through decoration-line" : "text-ink"
+              }`}
+            >
+              {etape.titre}
+            </Link>
           </h3>
           <p className="mt-1.5 text-sm leading-relaxed text-muted">
             {etape.preuve}

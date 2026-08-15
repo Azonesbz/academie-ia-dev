@@ -24,4 +24,5 @@ export async function basculerEtape(formData: FormData) {
   }
 
   revalidatePath("/app");
+  revalidatePath(`/app/etapes/${slug}`);
 }
