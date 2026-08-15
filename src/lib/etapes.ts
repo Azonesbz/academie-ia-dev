@@ -1,132 +1,63 @@
+import { ETAPES_BASE } from "./etapes-base";
+import { ETAPES_METHODE } from "./etapes-methode";
+
 /**
- * Les cinq étapes de la progression. Contenu figé et daté : l'académie est
- * close, elle ne se nourrit pas. Chaque étape repose sur une surface dont le
- * churn mesuré est nul ou quasi nul — aucune ne cite de commande, de nom de
- * hook ni de champ de configuration.
+ * Deux parcours gratuits, tous deux clos et datés.
+ *
+ * « La base » donne le vocabulaire de l'écosystème : ce qu'est un agent, une
+ * skill, un sous-agent, un hook, un plugin — et surtout ce qui les distingue.
+ * « La méthode » enseigne les gestes qui ne dépendent d'aucune interface.
+ *
+ * Ce qui est payant n'est pas ici : c'est le banc de diagnostic et le kit
+ * d'audit, qui se vendent une fois. Voir /offre.
  */
 
+export type Parcours = "base" | "methode";
+
 export type Etape = {
-  /** Rang dans la progression, à partir de 0 pour la vérification d'install. */
+  parcours: Parcours;
+  /** Rang au sein de son parcours. */
   rang: number;
-  /** Identifiant d'URL. */
   slug: string;
   titre: string;
-  /** La compétence visée, à la première personne. Affichée en tête de leçon
-   *  comme une cible, jamais en bas comme un constat sur l'apprenant. */
+  /** La compétence visée, à la première personne. Une cible, pas un constat. */
   jeSais: string;
-  /** Ce qu'il produit sur son dépôt, annoncé dès la page publique. */
-  preuve: string;
-  /** Durée annoncée, honnête. */
+  /** L'erreur répandue que cette étape corrige. */
+  confusion: string;
+  /** Ce que l'apprenant produit sur son dépôt. Le parcours « base » enseigne
+   *  des notions et n'en réclame pas toujours un. */
+  preuve?: string;
   duree: string;
-  /** Ce que déclare le premier jalon. Trois critères, tous falsifiables. */
   criteresJalon1: readonly string[];
-  /** Ce que déclare le second, qui ne peut être posé qu'un autre jour. */
   critereJalon2: string;
-  /** La phrase que dirait quelqu'un qui croit maîtriser et qui ne maîtrise
-   *  pas. C'est le critère le plus utile : il doit pouvoir s'y reconnaître. */
   signeDeNonMaitrise: string;
 };
 
-export const ETAPES: readonly Etape[] = [
-  {
-    rang: 0,
-    slug: "verifier-ce-qui-tourne",
-    titre: "Vérifier que ce qui est déclaré est ce qui tourne",
-    jeSais:
-      "Je sais dire si un dispositif que ma configuration déclare s'est réellement exécuté, au lieu de croire une déclaration ou un diagnostic vert.",
-    preuve:
-      "La liste de ce qui s'exécute vraiment dans tes sessions, confrontée à ce que ta configuration prétend.",
-    duree: "15 minutes",
-    criteresJalon1: [
-      "J'ai écrit mon diagnostic du cas truqué avant d'ouvrir la révélation, et le mien nommait déjà la même chose qu'elle : un rapport vert atteste son propre périmètre, jamais le chargement effectif.",
-      "J'ai cherché dans l'historique de mes propres sessions, et je peux citer ce que j'y ai trouvé — une règle citée mot pour mot, un refus, un comportement qui ne s'expliquerait pas autrement — ou dire que je n'ai rien trouvé du tout.",
-      "Je sais nommer l'observation qui sépare « chargé mais jamais sollicité » de « déclaré mais absent du disque », et dire où je suis allé la chercher chez moi.",
-    ],
-    critereJalon2:
-      "Je l'ai refait un autre jour, sur un dispositif dont je n'avais pas écrit la configuration moi-même, sans rouvrir cette page.",
-    signeDeNonMaitrise:
-      "Devant un dispositif silencieux, ta première question est encore « est-ce qu'il est bien déclaré ? » au lieu de « où serait sa marque s'il tournait ? ».",
+export const PARCOURS: Record<
+  Parcours,
+  { titre: string; sous_titre: string }
+> = {
+  base: {
+    titre: "La base",
+    sous_titre:
+      "Les objets de l'écosystème, et ce qui les distingue. Cinq notions, deux heures.",
   },
-  {
-    rang: 1,
-    slug: "decouper-une-demande",
-    titre: "Découper une demande en tâches qu'un agent exécute sans déraper",
-    jeSais:
-      "Je sais reconnaître la tranche trop grosse avant de la lancer, à ce que je n'arrive pas à écrire sa preuve.",
-    preuve:
-      "Une demande réelle de ton projet, découpée, avec pour chaque tranche son objectif unique et sa preuve.",
-    duree: "45 minutes",
-    criteresJalon1: [
-      "J'ai écrit mon diagnostic du découpage truqué avant d'ouvrir la révélation, et j'avais désigné la même tranche pour la même raison : sa preuve est une phrase, pas une observation.",
-      "J'ai découpé une demande réelle de mon projet, et pour chaque tranche j'ai écrit son intention unique, sa preuve et ses fichiers avant de lancer quoi que ce soit.",
-      "J'ai scindé au moins une tranche parce qu'elle dépassait trois fichiers métier, et je peux dire laquelle.",
-    ],
-    critereJalon2:
-      "Je l'ai refait un autre jour, sur une autre demande, sans rouvrir cette page.",
-    signeDeNonMaitrise:
-      "Ta dernière demande lancée, tu n'avais pas écrit sa preuve avant : tu as jugé le résultat après coup, en le lisant.",
+  methode: {
+    titre: "La méthode",
+    sous_titre:
+      "Les gestes qui ne dépendent d'aucune version d'outil. Cinq étapes, sur ton dépôt.",
   },
-  {
-    rang: 2,
-    slug: "le-test-qui-echoue-dabord",
-    titre: "Le test qui échoue d'abord",
-    jeSais:
-      "Je sais faire produire la preuve avant le code, et dire ce qu'un test vert ne prouve pas.",
-    preuve:
-      "Un test rouge, puis vert, sur un comportement de ton propre projet — en Arrange, Act, Assert.",
-    duree: "1 heure",
-    criteresJalon1: [
-      "J'ai écrit mon diagnostic du test truqué avant d'ouvrir la révélation, et j'avais nommé l'épreuve exacte : si je supprime le corps de la fonction testée, il reste vert.",
-      "Sur un comportement réel de mon projet, j'ai écrit le test d'abord, je l'ai vu rouge, et j'ai lu la raison de l'échec — je peux dire si c'était celle que j'attendais.",
-      "Mon test est en Arrange, Act, Assert avec les trois commentaires visibles dans le source, et il assertionne sur ce qui est stable, pas sur un message.",
-    ],
-    critereJalon2:
-      "Je l'ai refait un autre jour, sur un comportement qui dépend d'une date, d'un aléa ou du réseau, sans rouvrir cette page.",
-    signeDeNonMaitrise:
-      "La dernière fois qu'un test est passé au vert du premier coup, tu l'as cru — tu ne l'as pas cassé exprès pour voir s'il savait échouer.",
-  },
-  {
-    rang: 3,
-    slug: "le-plan-rempli",
-    titre: "Le plan rempli",
-    jeSais:
-      "Je sais écrire le plan qu'un agent peut suivre seul, et repérer la tâche à scinder à son message de commit.",
-    preuve: "Un plan complet sur une tâche réelle, ses sept champs renseignés.",
-    duree: "30 minutes",
-    criteresJalon1: [
-      "J'ai écrit mon diagnostic du plan truqué avant d'ouvrir la révélation, et j'avais désigné la même tâche pour la même raison : son message de commit annonce deux intentions.",
-      "Je peux citer les sept champs sans rouvrir cette page, et je les ai remplis tous les sept sur une tâche réelle de mon projet.",
-      "J'ai scindé au moins une tâche parce que je n'arrivais pas à écrire son message de commit d'avance, et je peux dire laquelle.",
-    ],
-    critereJalon2:
-      "Je l'ai refait un autre jour, sur une autre tâche, sans rouvrir cette page.",
-    signeDeNonMaitrise:
-      "Ton dernier plan tenait dans une consigne d'une phrase que l'agent a interprétée — et à la reprise, tu as dû reconstruire ce que tu voulais.",
-  },
-  {
-    rang: 4,
-    slug: "la-regle-qui-refuse",
-    titre: "La règle qui refuse",
-    jeSais:
-      "Je sais choisir la règle qui mérite de me refuser réellement, et dire ce qu'elle laisse passer.",
-    preuve:
-      "Un garde qui bloque, son test, et surtout : la justification écrite du choix de cette règle plutôt que d'une autre.",
-    duree: "1 heure",
-    criteresJalon1: [
-      "J'ai écrit mon diagnostic de la règle truquée avant d'ouvrir la révélation, et j'avais nommé la même chose qu'elle : ce garde n'a jamais rien refusé à son auteur, il interdit un geste qu'il ne fait pas.",
-      "Ma règle existe et elle tourne : règle native si elle suffisait, script avec son test sinon.",
-      "J'ai écrit noir sur blanc ce que ma règle laisse passer, et pourquoi les autres promesses que je m'étais faites restent des vœux.",
-    ],
-    critereJalon2:
-      "Elle m'a refusé quelque chose un autre jour, à moi, en dehors d'un cas de test fabriqué — je peux dire quand, et je ne l'ai pas désactivée pour continuer.",
-    signeDeNonMaitrise:
-      "Ta règle n'a encore refusé que ce que tu as toi-même tapé pour la tester.",
-  },
-] as const;
+};
+
+export const ETAPES: readonly Etape[] = [...ETAPES_BASE, ...ETAPES_METHODE];
 
 /** Le contenu est daté : il ne sera pas mis à jour, et ça se dit. */
 export const ARRETE_LE = "août 2026";
 
 export function etapeParSlug(slug: string): Etape | undefined {
   return ETAPES.find((e) => e.slug === slug);
+}
+
+export function etapesDu(parcours: Parcours): readonly Etape[] {
+  return ETAPES.filter((e) => e.parcours === parcours);
 }

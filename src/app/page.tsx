@@ -1,16 +1,16 @@
-import Link from "next/link";
 import { EnTete } from "@/components/EnTete";
-import { CarteEtape } from "@/components/CarteEtape";
 import { HeroAccueil } from "@/components/HeroAccueil";
+import { SectionOffre } from "@/components/SectionOffre";
+import { SectionParcours } from "@/components/SectionParcours";
 import { SectionSocle } from "@/components/SectionSocle";
-import { ARRETE_LE, ETAPES } from "@/lib/etapes";
+import { ARRETE_LE } from "@/lib/etapes";
 import { currentUser } from "@/lib/auth";
 
 const REFUS = [
-  "Aucune vidéo, aucun quiz, aucun certificat.",
-  "Aucune commande ni option de configuration citée — ce qui périmerait en trois mois n'est pas ici.",
-  "Rien de ton code n'est envoyé : on ne garde que l'étape où tu en es.",
-  "Gratuit, et sans version payante derrière.",
+  "Aucune vidéo, aucun quiz, aucun certificat — l'édition payante n'en délivre pas davantage.",
+  "Aucun abonnement, aucune reconduction, aucun bulletin périodique promis : ce qu'on ne peut pas tenir, on ne le vend pas.",
+  "Rien de ton code n'est envoyé, gratuit ou payant. Le kit d'audit tourne chez toi et ne parle qu'à toi.",
+  "Les deux parcours gratuits ne sont pas une démo : ils ne se referment jamais et ne sont pas amputés.",
 ];
 
 export default async function PageAccueil() {
@@ -62,23 +62,9 @@ export default async function PageAccueil() {
 
         <SectionSocle />
 
-        <section
-          id="etapes"
-          className="scroll-mt-20 border-t border-line/60 py-16 sm:py-20 lg:py-24"
-        >
-          <h2 className="text-2xl font-medium tracking-tight text-ink sm:text-3xl">
-            Les cinq étapes
-          </h2>
-          <p className="mt-4 max-w-2xl leading-relaxed text-muted">
-            Chacune se fait sur ton projet, pas sur un dépôt-jouet, et produit
-            quelque chose qui tourne. Aucune ne se valide en cliquant.
-          </p>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:gap-8">
-            {ETAPES.map((etape) => (
-              <CarteEtape key={etape.slug} etape={etape} />
-            ))}
-          </div>
-        </section>
+        <SectionParcours parcours="base" ancre="etapes" />
+        <SectionParcours parcours="methode" />
+        <SectionOffre />
 
         <section className="border-t border-line/60 py-16 sm:py-20 lg:py-24">
           <h2 className="text-2xl font-medium tracking-tight text-ink sm:text-3xl">
@@ -96,9 +82,11 @@ export default async function PageAccueil() {
 
       <footer className="border-t border-line/80 bg-surface-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-          <p className="text-sm text-muted">
-            Contenu arrêté en {ARRETE_LE} et non mis à jour. Ce qui est enseigné
-            ici ne dépend d&apos;aucune version d&apos;outil.
+          <p className="max-w-3xl text-sm leading-relaxed text-muted">
+            Contenu arrêté en {ARRETE_LE} et non mis à jour. « La méthode » ne
+            dépend d&apos;aucune version d&apos;outil ; « La base » décrit un
+            écosystème qui bouge, et vieillira — c&apos;est écrit dessus plutôt
+            que promis entretenu.
           </p>
         </div>
       </footer>
