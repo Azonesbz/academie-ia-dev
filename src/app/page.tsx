@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EnTete } from "@/components/EnTete";
 import { CarteEtape } from "@/components/CarteEtape";
+import { SectionSocle } from "@/components/SectionSocle";
 import { ARRETE_LE, ETAPES } from "@/lib/etapes";
 import { currentUser } from "@/lib/auth";
 
@@ -74,6 +75,8 @@ export default async function PageAccueil() {
             </aside>
           </div>
         </section>
+
+        <SectionSocle />
 
         <section
           id="etapes"
